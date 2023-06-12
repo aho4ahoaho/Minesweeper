@@ -2,36 +2,29 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainMenu{
-    JFrame frame;
-    MainMenu(){
-        JFrame frame = new JFrame("Main Menu");
-        this.frame = frame;
-        setFrameOption();
-    }
-    MainMenu(JFrame frame){
-        this.frame = frame;
-        setFrameOption();
-    }
-    private void setFrameOption(){
-        frame.setSize(400, 400);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-    public JFrame getFrame(){
-        return frame;
-    }
-    void test (){
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-        JPanel topPanel = new JPanel();
-        JPanel bottomPanel = new JPanel();
-        JPanel midPanel = new JPanel();
-        GridLayout midLayout =  new GridLayout(3, 3);
-        midPanel.setLayout(midLayout);
+    JPanel menuPanel;
+    GameHandler gameHandler;
+    MainMenu(JPanel menuPanel,GameHandler gameHandler){
+        this.gameHandler = gameHandler;
+        this.menuPanel = menuPanel;
 
-
-        frame.add(topPanel);
-        frame.add(midPanel);
-        frame.add(bottomPanel);
+        menuPanel.setLayout(new BorderLayout());
+        JButton startButton = new JButton("Start");
+        JButton exitButton = new JButton("Exit");
+        startButton.addActionListener(e -> {
+            CardLayout cardLayout = (CardLayout) menuPanel.getParent().getLayout();
+            cardLayout.show(menuPanel.getParent(), "game");
+            gameHandler.initialize();
+        });
+        exitButton.addActionListener(e -> {
+            System.exit(0);
+        });
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(startButton);
+        buttonPanel.add(exitButton);
+        menuPanel.add(buttonPanel, BorderLayout.SOUTH); 
+    }
+    public void setGameHandler(GameHandler gameHandler) {
+        this.gameHandler = gameHandler;
     }
 }
