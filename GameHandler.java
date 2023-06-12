@@ -41,7 +41,7 @@ public class GameHandler {
     void randomize() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                if (rand.nextInt(5) == 0) {
+                if (rand.nextInt(7) == 0) {
                     board[i][j] = 2;
                 } else {
                     board[i][j] = 0;
@@ -79,7 +79,7 @@ public class GameHandler {
                     continue;
                 }
                 int bomb = boardView.searchNeighbor(tx, ty);
-                if ((board[tx][ty] == 0 || board[tx][ty] == 3)) {
+                if ((board[tx][ty] == 0)) {
                     board[tx][ty] = 1;
                     score++;
                     if (bomb == 0) {
@@ -140,7 +140,7 @@ public class GameHandler {
                         return;
                 }
             }
-
+            check();
             boardView.updateBoard(board);
         }
 
@@ -224,10 +224,10 @@ class BoardView extends JPanel {
                         String bomb = String.valueOf(searchNeighbor(x, y));
                         g.drawString(bomb, x * w, (y + 1) * h);
                         break;
-                    /*case 2:
+                    case 2:
                         g.setColor(Color.RED);
                         g.fillRect(x * w, y * h, w, h);
-                        break;*/
+                        break;
                     case 4:
                     case 3:
                         g.setColor(Color.BLUE);
@@ -253,7 +253,7 @@ class BoardView extends JPanel {
                 if (tx < 0 || tx >= board.length || ty < 0 || ty >= board[0].length) {
                     continue;
                 }
-                if (board[tx][ty] == 2) {
+                if (board[tx][ty] == 2|| board[tx][ty] == 4) {
                     result++;
                 }
             }
