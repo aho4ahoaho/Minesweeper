@@ -224,10 +224,10 @@ class BoardView extends JPanel {
                         String bomb = String.valueOf(searchNeighbor(x, y));
                         g.drawString(bomb, x * w, (y + 1) * h);
                         break;
-                    case 2:
+                    /*case 2:
                         g.setColor(Color.RED);
                         g.fillRect(x * w, y * h, w, h);
-                        break;
+                        break;*/
                     case 4:
                     case 3:
                         g.setColor(Color.BLUE);
