@@ -5,18 +5,30 @@ public class ResultMenu {
     JPanel resultPanel;
     JLabel resultLabel;
     int score = 0;
+    int[][] board;
+    BoardView boardView;
 
     ResultMenu(JPanel resultPanel) {
         this.resultPanel = resultPanel;
-        resultPanel.setLayout(new BorderLayout());
+        resultPanel.setLayout(new FlowLayout());
         JButton backButton = new JButton("Back");
         resultLabel = new JLabel("Score: " + score);
+        resultLabel.setHorizontalAlignment(JLabel.CENTER);
+        resultLabel.setFont(new Font("Arial", Font.PLAIN, 30));
         backButton.addActionListener(e -> {
             CardLayout cardLayout = (CardLayout) resultPanel.getParent().getLayout();
             cardLayout.show(resultPanel.getParent(), "menu");
         });
-        resultPanel.add(backButton, BorderLayout.SOUTH);
-        resultPanel.add(resultLabel, BorderLayout.CENTER);
+        boardView = new BoardView();
+        boardView.setIsGameOver(true);
+        resultPanel.add(resultLabel);
+        resultPanel.add(boardView);
+        resultPanel.add(backButton);
+    }
+
+    public void setBoard(int[][] board) {
+        this.board = board;
+        boardView.updateBoard(board);
     }
 
     public void setScore(int score) {
