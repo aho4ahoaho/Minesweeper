@@ -12,6 +12,8 @@ public class GameHandler {
     int[][] board = new int[15][15];
     Random rand = new Random();
     int score = 0;
+    TimerView timerView = new TimerView();
+    Thread timerThread = new Thread(timerView);
 
     GameHandler(JPanel gamePanel, ResultMenu resultMenu) {
         this.gamePanel = gamePanel;
@@ -21,11 +23,12 @@ public class GameHandler {
         boardView = new BoardView();
         boardView.setBackground(Color.WHITE);
 
-        gamePanel.add(boardView, BorderLayout.CENTER);
 
         boardView.addMouseListener(new MouseProc());
         boardView.setSize(500, 500);
 
+        gamePanel.add(boardView, BorderLayout.CENTER);
+        gamePanel.add(timerView, BorderLayout.CENTER);
     }
 
     void boardView() {
@@ -128,7 +131,7 @@ public class GameHandler {
                     case 0:
                         board[x][y] = 1;
                         score++;
-                        if(boardView.searchNeighbor(x, y) == 0){
+                        if (boardView.searchNeighbor(x, y) == 0) {
                             autoOpen(x, y);
                         }
                         break;
@@ -224,10 +227,12 @@ class BoardView extends JPanel {
                         String bomb = String.valueOf(searchNeighbor(x, y));
                         g.drawString(bomb, x * w, (y + 1) * h);
                         break;
-                    /*case 2:
-                        g.setColor(Color.RED);
-                        g.fillRect(x * w, y * h, w, h);
-                        break;*/
+                    /*
+                     * case 2:
+                     * g.setColor(Color.RED);
+                     * g.fillRect(x * w, y * h, w, h);
+                     * break;
+                     */
                     case 4:
                     case 3:
                         g.setColor(Color.BLUE);
