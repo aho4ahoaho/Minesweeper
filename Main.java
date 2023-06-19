@@ -20,7 +20,6 @@ public class Main {
         GameHandler game = new GameHandler(gamePanel, result);
 
         MainMenu menu = new MainMenu(menuPanel, game);
-        menu.setGameHandler(game);
         frame.setVisible(true);
     }
 }

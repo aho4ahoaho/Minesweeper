@@ -12,6 +12,11 @@ public class GameHandler {
     int[][] board = new int[15][15];
     Random rand = new Random();
     int score = 0;
+    Difficulty proba = Difficulty.NORMAL;
+
+    public static enum Difficulty {
+        EASY, NORMAL, HARD
+    }
 
     GameHandler(JPanel gamePanel, ResultMenu resultMenu) {
         this.gamePanel = gamePanel;
@@ -28,6 +33,14 @@ public class GameHandler {
 
     }
 
+    public void setProba(Difficulty proba) {
+        this.proba = proba;
+    }
+
+    public void setBoardSize(int size){
+        board = new int[size][size];
+    }
+
     void boardView() {
         boardView.updateBoard(board);
     }
@@ -39,9 +52,21 @@ public class GameHandler {
     }
 
     void randomize() {
+        int proba;
+        switch (this.proba) {
+            case EASY:
+                proba = 12;
+                break;
+            case HARD:
+                proba = 4;
+                break;
+            default:
+                proba = 7;
+                break;
+        }
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                if (rand.nextInt(5) == 0) {
+                if (rand.nextInt(proba) == 0) {
                     board[i][j] = 2;
                 } else {
                     board[i][j] = 0;
@@ -128,7 +153,7 @@ public class GameHandler {
                     case 0:
                         board[x][y] = 1;
                         score++;
-                        if(boardView.searchNeighbor(x, y) == 0){
+                        if (boardView.searchNeighbor(x, y) == 0) {
                             autoOpen(x, y);
                         }
                         break;
@@ -224,10 +249,10 @@ class BoardView extends JPanel {
                         String bomb = String.valueOf(searchNeighbor(x, y));
                         g.drawString(bomb, x * w, (y + 1) * h);
                         break;
-                    /*case 2:
+                    case 2:
                         g.setColor(Color.RED);
                         g.fillRect(x * w, y * h, w, h);
-                        break;*/
+                        break;
                     case 4:
                     case 3:
                         g.setColor(Color.BLUE);
