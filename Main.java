@@ -10,9 +10,10 @@ public class Main {
         CardLayout cardLayout = new CardLayout();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(550, 620);
 
         frame.setLayout(cardLayout);
+        frame.setResizable(false);
         frame.add(menuPanel, "menu");
         frame.add(gamePanel, "game");
         frame.add(resultPanel, "result");
@@ -20,7 +21,6 @@ public class Main {
         GameHandler game = new GameHandler(gamePanel, result);
 
         MainMenu menu = new MainMenu(menuPanel, game);
-        menu.setGameHandler(game);
         frame.setVisible(true);
     }
 }
