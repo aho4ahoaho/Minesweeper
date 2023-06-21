@@ -7,6 +7,7 @@ import javax.swing.*;
 
 public class GameHandler {
     JPanel gamePanel;
+    JLabel scoreLabel;
     BoardView boardView;
     ResultMenu resultMenu;
     int[][] board = new int[15][15];
@@ -22,14 +23,14 @@ public class GameHandler {
         this.gamePanel = gamePanel;
         this.resultMenu = resultMenu;
 
-        gamePanel.setLayout(new BorderLayout());
+        gamePanel.setLayout(new FlowLayout());
         boardView = new BoardView();
-        boardView.setBackground(Color.WHITE);
-
-        gamePanel.add(boardView, BorderLayout.CENTER);
-
+        scoreLabel = new JLabel("Score: " + score);
+        scoreLabel.setHorizontalAlignment(JLabel.CENTER);
+        scoreLabel.setFont(new Font("Arial", Font.PLAIN, 30));
         boardView.addMouseListener(new MouseProc());
-        boardView.setSize(500, 500);
+        gamePanel.add(scoreLabel);
+        gamePanel.add(boardView);
 
     }
 
@@ -46,7 +47,7 @@ public class GameHandler {
     }
 
     void initialize() {
-        score = 0;
+        setScore(0);
         randomize();
         boardView();
     }
@@ -83,14 +84,20 @@ public class GameHandler {
                 }
             }
         }
-        resultMenu.setScore(score);
         resultView();
         return true;
     }
 
     void resultView() {
+        resultMenu.setScore(score);
+        resultMenu.setBoard(board);
         CardLayout cardLayout = (CardLayout) gamePanel.getParent().getLayout();
         cardLayout.show(gamePanel.getParent(), "result");
+    }
+
+    void setScore(int score) {
+        this.score = score;
+        scoreLabel.setText("Score: " + score);
     }
 
     void autoOpen(int x, int y) {
@@ -104,9 +111,9 @@ public class GameHandler {
                     continue;
                 }
                 int bomb = boardView.searchNeighbor(tx, ty);
-                if ((board[tx][ty] == 0 || board[tx][ty] == 3)) {
+                if ((board[tx][ty] == 0)) {
                     board[tx][ty] = 1;
-                    score++;
+                    setScore(score + 1);
                     if (bomb == 0) {
                         autoOpen(tx, ty);
 
@@ -152,7 +159,7 @@ public class GameHandler {
                     case 3:
                     case 0:
                         board[x][y] = 1;
-                        score++;
+                        setScore(score + 1);
                         if (boardView.searchNeighbor(x, y) == 0) {
                             autoOpen(x, y);
                         }
@@ -165,7 +172,7 @@ public class GameHandler {
                         return;
                 }
             }
-
+            check();
             boardView.updateBoard(board);
         }
 
@@ -188,47 +195,21 @@ public class GameHandler {
     }
 }
 
-class MiddleFont {
-    FontMetrics fontMetrics;
-    Font font;
-
-    MiddleFont(FontMetrics fontMetrics, Font font) {
-        this.fontMetrics = fontMetrics;
-        this.font = font;
-    }
-
-    int xpos(int x, String str) {
-        return x + fontMetrics.stringWidth(str) / 2;
-    }
-
-    int xpos(int x) {
-        return xpos(x, "0");
-    }
-
-    int xpos(Double x, String str) {
-        return xpos((int) Math.round(x), str);
-    }
-
-    int xpos(Double x) {
-        return xpos(x, "0");
-    }
-
-    int ypos(int y) {
-        return y + fontMetrics.getHeight() / 2;
-    }
-
-    int ypos(Double y) {
-        return ypos((int) Math.round(y));
-    }
-}
-
 class BoardView extends JPanel {
     // [x][y] 左上が原点
     // 0:開けてない 1:開けてある 2:爆弾 3:旗 4:旗あり爆弾
     int board[][] = new int[15][15];
     Font font = new Font("Arial", Font.PLAIN, 20);
-    FontMetrics fontMetrics = getFontMetrics(font);
-    MiddleFont middleFont = new MiddleFont(fontMetrics, font);
+    Boolean isGameOver = false;
+
+    BoardView() {
+        super();
+        setPreferredSize(new Dimension(500, 500));
+    }
+    
+    public void setIsGameOver(Boolean isGameOver) {
+        this.isGameOver = isGameOver;
+    }
 
     @Override
     public void paint(Graphics g) {
@@ -250,7 +231,12 @@ class BoardView extends JPanel {
                         g.drawString(bomb, x * w, (y + 1) * h);
                         break;
                     case 2:
-                        g.setColor(Color.RED);
+                        if (isGameOver) {
+                            g.setColor(Color.RED);
+
+                        } else {
+                            g.setColor(Color.WHITE);
+                        }
                         g.fillRect(x * w, y * h, w, h);
                         break;
                     case 4:
@@ -278,7 +264,7 @@ class BoardView extends JPanel {
                 if (tx < 0 || tx >= board.length || ty < 0 || ty >= board[0].length) {
                     continue;
                 }
-                if (board[tx][ty] == 2) {
+                if (board[tx][ty] == 2 || board[tx][ty] == 4) {
                     result++;
                 }
             }
