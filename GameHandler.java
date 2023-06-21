@@ -13,6 +13,8 @@ public class GameHandler {
     int[][] board = new int[15][15];
     Random rand = new Random();
     int score = 0;
+    TimerView timerView = new TimerView();
+    Thread timerThread = new Thread(timerView);
     Difficulty proba = Difficulty.NORMAL;
 
     public static enum Difficulty {
@@ -30,8 +32,8 @@ public class GameHandler {
         scoreLabel.setFont(new Font("Arial", Font.PLAIN, 30));
         boardView.addMouseListener(new MouseProc());
         gamePanel.add(scoreLabel);
-        gamePanel.add(boardView);
-
+        gamePanel.add(boardView, BorderLayout.CENTER);
+        gamePanel.add(timerView, BorderLayout.CENTER);
     }
 
     public void setProba(Difficulty proba) {
