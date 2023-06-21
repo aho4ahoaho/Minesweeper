@@ -2,11 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.*;
 
-public class TimerView extends JPanel implements Runnable{
+public class TimerView extends JLabel implements Runnable{
     private LocalDateTime startTime;
     private Boolean isRunning = false;
     TimerView(){
         startTime = LocalDateTime.now();
+        setText("00:00");
     }
 
     public void setTime(){
@@ -25,26 +26,24 @@ public class TimerView extends JPanel implements Runnable{
         return time;
     }
 
-    public void stopCount(){
+    public void stop(){
         isRunning = false;
     }
 
     @Override
     public void run() {
         isRunning = true;
+        setText("00:00");
         while(isRunning){
             try{
                 Thread.sleep(1000);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
-            repaint();
+            long time = getTime();
+            long minute = time / 60;
+            long second = time % 60;
+            setText(String.format("%02d:%02d", minute, second));
         }
-    }
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        long time = getTime();
-        g.drawString("経過時間: " + time + "秒", 10, 20);
     }
 }
