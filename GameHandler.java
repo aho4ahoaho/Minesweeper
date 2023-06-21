@@ -14,7 +14,6 @@ public class GameHandler {
     Random rand = new Random();
     int score = 0;
     TimerView timerView = new TimerView();
-    Thread timerThread = new Thread(timerView);
     Difficulty proba = Difficulty.NORMAL;
 
     public static enum Difficulty {
@@ -27,13 +26,19 @@ public class GameHandler {
 
         gamePanel.setLayout(new FlowLayout());
         boardView = new BoardView();
+        boardView.addMouseListener(new MouseProc());
+        boardView.setIsGameOver(true);
+
         scoreLabel = new JLabel("Score: " + score);
         scoreLabel.setHorizontalAlignment(JLabel.CENTER);
         scoreLabel.setFont(new Font("Arial", Font.PLAIN, 30));
-        boardView.addMouseListener(new MouseProc());
+
+        timerView.setHorizontalAlignment(JLabel.CENTER);
+        timerView.setFont(new Font("Arial", Font.PLAIN, 30));
+
         gamePanel.add(scoreLabel);
-        gamePanel.add(boardView, BorderLayout.CENTER);
-        gamePanel.add(timerView, BorderLayout.CENTER);
+        gamePanel.add(timerView);
+        gamePanel.add(boardView);
     }
 
     public void setProba(Difficulty proba) {
@@ -52,6 +57,8 @@ public class GameHandler {
         setScore(0);
         randomize();
         boardView();
+        timerView.setTime();
+        new Thread(timerView).start();
     }
 
     void randomize() {
@@ -93,6 +100,10 @@ public class GameHandler {
     void resultView() {
         resultMenu.setScore(score);
         resultMenu.setBoard(board);
+        timerView.stop();
+        System.out.println("Game Over");
+        System.out.println("Score: " + score);
+        System.out.println("Time: " + timerView.getTime());
         CardLayout cardLayout = (CardLayout) gamePanel.getParent().getLayout();
         cardLayout.show(gamePanel.getParent(), "result");
     }
