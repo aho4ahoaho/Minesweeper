@@ -5,12 +5,16 @@ import java.util.Random;
 
 import javax.swing.*;
 
+enum State {
+    CLOSED, OPENED, FLAG, BOMB, BOMB_FLAG
+}
+
 public class GameHandler {
     JPanel gamePanel;
     JLabel scoreLabel;
     BoardView boardView;
     ResultMenu resultMenu;
-    int[][] board = new int[15][15];
+    State[][] board = new State[15][15];
     Random rand = new Random();
     int score = 0;
     TimerView timerView = new TimerView();
@@ -45,8 +49,8 @@ public class GameHandler {
         this.proba = proba;
     }
 
-    public void setBoardSize(int size){
-        board = new int[size][size];
+    public void setBoardSize(int size) {
+        board = new State[size][size];
     }
 
     void boardView() {
@@ -77,9 +81,9 @@ public class GameHandler {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 if (rand.nextInt(proba) == 0) {
-                    board[i][j] = 2;
+                    board[i][j] = State.BOMB;
                 } else {
-                    board[i][j] = 0;
+                    board[i][j] = State.CLOSED;
                 }
             }
         }
@@ -88,7 +92,7 @@ public class GameHandler {
     Boolean check() {
         for (int x = 0; x < board.length; x++) {
             for (int y = 0; y < board[0].length; y++) {
-                if (board[x][y] == 0) {
+                if (board[x][y] == State.CLOSED) {
                     return false;
                 }
             }
@@ -124,8 +128,8 @@ public class GameHandler {
                     continue;
                 }
                 int bomb = boardView.searchNeighbor(tx, ty);
-                if ((board[tx][ty] == 0)) {
-                    board[tx][ty] = 1;
+                if ((board[tx][ty] == State.CLOSED)) {
+                    board[tx][ty] = State.OPENED;
                     setScore(score + 1);
                     if (bomb == 0) {
                         autoOpen(tx, ty);
@@ -151,38 +155,37 @@ public class GameHandler {
             if (e.getButton() == MouseEvent.BUTTON3) {
                 switch (board[x][y]) {
                     // 通常マスに旗を立てる
-                    case 0:
-                        board[x][y] = 3;
+                    case CLOSED:
+                        board[x][y] = State.FLAG;
                         break;
                     // 旗ありマスを通常マスに
-                    case 3:
-                        board[x][y] = 0;
+                    case FLAG:
+                        board[x][y] = State.CLOSED;
                         break;
                     // 旗なし爆弾を旗あり爆弾に
-                    case 2:
-                        board[x][y] = 4;
+                    case BOMB:
+                        board[x][y] = State.BOMB_FLAG;
                         break;
                     // 旗あり爆弾を旗なし爆弾に
-                    case 4:
-                        board[x][y] = 2;
+                    case BOMB_FLAG:
+                        board[x][y] = State.BOMB;
                         break;
                 }
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 switch (board[x][y]) {
-                    case 3:
-                    case 0:
-                        board[x][y] = 1;
+                    case CLOSED:
+                        board[x][y] = State.OPENED;
                         setScore(score + 1);
                         if (boardView.searchNeighbor(x, y) == 0) {
                             autoOpen(x, y);
                         }
                         break;
-                    case 1:
-                        break;
-                    case 2:
+                    case BOMB:
                         resultMenu.setScore(score);
                         resultView();
                         return;
+                    default:
+                        break;
                 }
             }
             check();
@@ -211,7 +214,7 @@ public class GameHandler {
 class BoardView extends JPanel {
     // [x][y] 左上が原点
     // 0:開けてない 1:開けてある 2:爆弾 3:旗 4:旗あり爆弾
-    int board[][] = new int[15][15];
+    State board[][] = new State[15][15];
     Font font = new Font("Arial", Font.PLAIN, 20);
     Boolean isGameOver = false;
 
@@ -219,7 +222,7 @@ class BoardView extends JPanel {
         super();
         setPreferredSize(new Dimension(500, 500));
     }
-    
+
     public void setIsGameOver(Boolean isGameOver) {
         this.isGameOver = isGameOver;
     }
@@ -232,18 +235,19 @@ class BoardView extends JPanel {
         int w = viewSize.width / board.length;
         int h = viewSize.height / board[0].length;
         g.setFont(font);
+        // 0:開けてない 1:開けてある 2:爆弾 3:旗 4:旗あり爆弾
 
         for (int x = 0; x < board.length; x++) {
             for (int y = 0; y < board[0].length; y++) {
                 switch (board[x][y]) {
-                    case 1:
+                    case OPENED:
                         g.setColor(Color.LIGHT_GRAY);
                         g.fillRect(x * w, y * h, w, h);
                         g.setColor(Color.BLACK);
                         String bomb = String.valueOf(searchNeighbor(x, y));
                         g.drawString(bomb, x * w, (y + 1) * h);
                         break;
-                    case 2:
+                    case BOMB:
                         if (isGameOver) {
                             g.setColor(Color.RED);
 
@@ -252,8 +256,8 @@ class BoardView extends JPanel {
                         }
                         g.fillRect(x * w, y * h, w, h);
                         break;
-                    case 4:
-                    case 3:
+                    case BOMB_FLAG:
+                    case FLAG:
                         g.setColor(Color.BLUE);
                         g.fillRect(x * w, y * h, w, h);
                         break;
@@ -277,7 +281,7 @@ class BoardView extends JPanel {
                 if (tx < 0 || tx >= board.length || ty < 0 || ty >= board[0].length) {
                     continue;
                 }
-                if (board[tx][ty] == 2 || board[tx][ty] == 4) {
+                if (board[tx][ty] == State.BOMB_FLAG || board[tx][ty] == State.BOMB) {
                     result++;
                 }
             }
@@ -285,7 +289,7 @@ class BoardView extends JPanel {
         return result;
     }
 
-    void updateBoard(int[][] board) {
+    void updateBoard(State[][] board) {
         this.board = board;
         repaint();
     }

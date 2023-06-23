@@ -5,7 +5,7 @@ public class ResultMenu {
     JPanel resultPanel;
     JLabel resultLabel;
     int score = 0;
-    int[][] board;
+    State[][] board;
     BoardView boardView;
 
     ResultMenu(JPanel resultPanel) {
@@ -26,7 +26,7 @@ public class ResultMenu {
         resultPanel.add(backButton);
     }
 
-    public void setBoard(int[][] board) {
+    public void setBoard(State[][] board) {
         this.board = board;
         boardView.updateBoard(board);
     }
