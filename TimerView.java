@@ -9,10 +9,12 @@ public class TimerView extends JLabel implements Runnable{
         setText("00:00");
     }
 
+    // 現在を開始時間に設定
     public void setTime(){
         setTime(LocalDateTime.now());
     }
 
+    // 任意の開始時間を設定
     public void setTime(LocalDateTime startTime){
         this.startTime = startTime;
     }
@@ -25,14 +27,18 @@ public class TimerView extends JLabel implements Runnable{
         return time;
     }
 
+    // タイマーを止める
     public void stop(){
         isRunning = false;
     }
 
     @Override
     public void run() {
+        // タイマーを開始
         isRunning = true;
         setText("00:00");
+
+        // フラグが立っている間は1秒ごとに経過時間を表示
         while(isRunning){
             try{
                 Thread.sleep(1000);
