@@ -4,7 +4,7 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         // ウィンドウの作成
-        JFrame frame = new JFrame("My Drawing");
+        JFrame frame = new JFrame("MineSweeper");
 
         // パネルの作成
         JPanel menuPanel = new JPanel();
