@@ -170,6 +170,8 @@ public class GameHandler {
                     case BOMB_FLAG:
                         board[x][y] = State.BOMB;
                         break;
+                    default:
+                        break;
                 }
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 switch (board[x][y]) {

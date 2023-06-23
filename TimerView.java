@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.time.*;
 
 public class TimerView extends JLabel implements Runnable{
