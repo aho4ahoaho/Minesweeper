@@ -4,7 +4,9 @@ import java.awt.*;
 public class ResultMenu {
     JPanel resultPanel;
     JLabel resultLabel;
+    JLabel timeLabel;
     int score = 0;
+    int time = 0;
     State[][] board;
     BoardView boardView;
 
@@ -16,6 +18,11 @@ public class ResultMenu {
         resultLabel = new JLabel("Score: " + score);
         resultLabel.setHorizontalAlignment(JLabel.CENTER);
         resultLabel.setFont(new Font("Arial", Font.PLAIN, 30));
+
+        // タイムの表示
+        timeLabel = new JLabel("Time: " + time + "s");
+        timeLabel.setHorizontalAlignment(JLabel.CENTER);
+        timeLabel.setFont(new Font("Arial", Font.PLAIN, 30));
 
         // メニューに戻るボタン
         JButton backButton = new JButton("Back");
@@ -29,6 +36,7 @@ public class ResultMenu {
         boardView.setIsGameOver(true);
 
         resultPanel.add(resultLabel);
+        resultPanel.add(timeLabel);
         resultPanel.add(boardView);
         resultPanel.add(backButton);
     }
@@ -43,5 +51,13 @@ public class ResultMenu {
     public void setScore(int score) {
         this.score = score;
         resultLabel.setText("Score: " + score);
+    }
+
+    // タイムを設定
+    public void setTime(int time) {
+        this.time = time;
+        long minute = time / 60;
+        long second = time % 60;
+        timeLabel.setText(String.format("%02d:%02d", minute, second));
     }
 }

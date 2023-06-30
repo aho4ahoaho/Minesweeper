@@ -122,9 +122,10 @@ public class GameHandler {
 
     // ゲーム終了時の処理
     void resultView() {
+        timerView.stop();
         resultMenu.setScore(score);
         resultMenu.setBoard(board);
-        timerView.stop();
+        resultMenu.setTime((int)timerView.getTime());
         System.out.println("Game Over");
         System.out.println("Score: " + score);
         System.out.println("Time: " + timerView.getTime());
